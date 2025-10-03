@@ -37,7 +37,7 @@ def setup_logging(output_dir):
         format='%(asctime)s - %(levelname)s - %(message)s',
         handlers=[
             logging.FileHandler(log_file, encoding='utf-8'),
-            logging.StreamHandler()  # 同时输出到控制台
+            logging.StreamHandler()
         ]
     )
     
@@ -45,12 +45,12 @@ def setup_logging(output_dir):
     logger.info(f"日志文件创建: {log_file}")
     return logger
 
-plt.rcParams['font.sans-serif'] = ['SimHei', 'Microsoft YaHei', 'DejaVu Sans']  # 设置中文字体
-plt.rcParams['axes.unicode_minus'] = False  # 解决负号显示问题
+plt.rcParams['font.sans-serif'] = ['SimHei', 'Microsoft YaHei', 'DejaVu Sans']
+plt.rcParams['axes.unicode_minus'] = False
 
 current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
 output_dir = f'ml_analysis_plots_{current_time}'
-os.makedirs(output_dir, exist_ok=True)  # 如果文件夹不存在则创建
+os.makedirs(output_dir, exist_ok=True)
 
 logger = setup_logging(output_dir)
 logger.info("="*50)
@@ -246,7 +246,7 @@ def plot_model_performance_radar(regression_results, target_column, output_dir, 
     sorted_models = sorted(models, key=lambda x: regression_results[x]['R2'], reverse=True)
     
     if max_models is None:
-        max_models = min(len(sorted_models), 8)  # 最多显示8个模型
+        max_models = min(len(sorted_models), 8)
     models = sorted_models[:max_models]
     
     logger.info(f"雷达图将显示 {len(models)} 个模型: {models}")
@@ -264,14 +264,14 @@ def plot_model_performance_radar(regression_results, target_column, output_dir, 
         values.append(model_values)
     
     angles = np.linspace(0, 2 * np.pi, len(metrics), endpoint=False).tolist()
-    angles += angles[:1]  # 闭合
+    angles += angles[:1]
     
     fig, ax = plt.subplots(figsize=(10, 10), subplot_kw=dict(projection='polar'))
     
     colors = plt.cm.Set3(np.linspace(0, 1, len(models)))
     
     for i, (model, model_values) in enumerate(zip(models, values)):
-        model_values += model_values[:1]  # 闭合
+        model_values += model_values[:1]
         ax.plot(angles, model_values, 'o-', linewidth=2, label=model, color=colors[i])
         ax.fill(angles, model_values, alpha=0.1, color=colors[i])
     
@@ -315,7 +315,7 @@ def plot_classification_metrics_comparison(classification_results, target_column
     if 'MCC' in classification_results[models[0]]:
         mcc_scores = [classification_results[model]['MCC'] for model in models]
     else:
-        mcc_scores = [0.5] * len(models)  # 默认值
+        mcc_scores = [0.5] * len(models)
     
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
     
@@ -360,9 +360,9 @@ def plot_precision_recall_curves(y_true, classification_results, target_column, 
         y_proba = result['proba']
         
         if y_proba.ndim > 1 and y_proba.shape[1] > 1:
-            if y_proba.shape[1] == 2:  # 二分类
+            if y_proba.shape[1] == 2:
                 y_score = y_proba[:, 1]
-            else:  # 多分类，计算宏平均
+            else:
                 try:
                     avg_precision = average_precision_score(
                         label_binarize(y_true, classes=np.unique(y_true)), 
@@ -414,7 +414,7 @@ def plot_classification_feature_importance(best_models, feature_names, target_co
         if hasattr(model, 'feature_importances_'):
             importances = model.feature_importances_
             if len(importances) == len(feature_names):
-                indices = np.argsort(importances)[::-1][:10]  # 前10个最重要的特征
+                indices = np.argsort(importances)[::-1][:10]
                 
                 ax.bar(range(len(indices)), importances[indices])
                 ax.set_xticks(range(len(indices)))
@@ -425,12 +425,12 @@ def plot_classification_feature_importance(best_models, feature_names, target_co
         elif hasattr(model, 'coef_'):
             coef = model.coef_
             if coef.ndim > 1:
-                coef = np.abs(coef).mean(axis=0)  # 多分类时取平均
+                coef = np.abs(coef).mean(axis=0)
             else:
                 coef = np.abs(coef)
                 
             if len(coef) == len(feature_names):
-                indices = np.argsort(coef)[::-1][:10]  # 前10个最重要的特征
+                indices = np.argsort(coef)[::-1][:10]
                 
                 ax.bar(range(len(indices)), coef[indices])
                 ax.set_xticks(range(len(indices)))
@@ -496,14 +496,14 @@ def plot_classification_performance_radar(classification_results, target_column,
         values.append(model_values)
     
     angles = np.linspace(0, 2 * np.pi, len(metrics), endpoint=False).tolist()
-    angles += angles[:1]  # 闭合
+    angles += angles[:1]
     
     fig, ax = plt.subplots(figsize=(10, 10), subplot_kw=dict(projection='polar'))
     
     colors = plt.cm.Set3(np.linspace(0, 1, len(models)))
     
     for i, (model, model_values) in enumerate(zip(models, values)):
-        model_values += model_values[:1]  # 闭合
+        model_values += model_values[:1]
         ax.plot(angles, model_values, 'o-', linewidth=2, label=model, color=colors[i])
         ax.fill(angles, model_values, alpha=0.1, color=colors[i])
     
@@ -524,16 +524,16 @@ def plot_classification_performance_radar(classification_results, target_column,
     plt.close()
     logger.info(f"分类模型性能雷达图已保存: {filename}")
 
-file_path = 'Flavor_OAV_Sensory_Training_v3_noisy.xlsx'
+file_path = 'Training.xlsx'
 logger.info(f"开始读取数据文件: {file_path}")
 
 try:
-    data = pd.read_excel(file_path)  # 读取Excel文件
+    data = pd.read_excel(file_path)
     logger.info("数据文件读取成功")
 except Exception as e:
     logger.error(f"读取Excel文件失败: {e}")
     try:
-        data = pd.read_excel(file_path, sheet_name=0)  # 读取第一个sheet
+        data = pd.read_excel(file_path, sheet_name=0)
         logger.info("使用第一个sheet读取成功")
     except Exception as e2:
         logger.error(f"读取第一个sheet也失败: {e2}")
@@ -590,7 +590,7 @@ for target_column in available_sensory_columns:
     X = data.drop(columns=available_sensory_columns)
     y = data[target_column]
 
-    y_binned = pd.qcut(y, q=3, labels=False, duplicates='drop')  # 若分箱重复则自动去除
+    y_binned = pd.qcut(y, q=3, labels=False, duplicates='drop')
     
     if y_binned.nunique() < 2:
         print(f"跳过 {target_column}: 分箱后类别数不足，无法进行分类/ROC分析。")
@@ -605,7 +605,7 @@ for target_column in available_sensory_columns:
     cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
     
     y_true_all_current_target = None
-    y_pred_proba_all = {} # 存储各模型预测概率
+    y_pred_proba_all = {}
 
     if len(np.unique(y_resampled)) > 2:
         y_true_all_current_target = label_binarize(y_resampled, classes=np.unique(y_resampled))
@@ -775,7 +775,7 @@ for target_column in available_sensory_columns:
                 'MAE': model_data['MAE'],
                 'params': model_data['params'],
                 'feature_columns': X_original.columns.tolist(),
-                'scaler': scaler_original  # 保存标准化器
+                'scaler': scaler_original
             }
             
             if 'best_model' in model_data:
@@ -1061,7 +1061,7 @@ for target_column in available_sensory_columns:
                 print(f"    生成SHAP依赖图: {feature} ({model_name})")
                 feature_index = X_original.columns.get_loc(feature)
                 shap_vals_feature = shap_values[:, feature_index].values
-                feature_values = X_original[feature].values  # 用原始特征值作横轴
+                feature_values = X_original[feature].values
 
                 plt.figure(figsize=(10, 6))
                 plt.scatter(feature_values, shap_vals_feature, color='steelblue', alpha=0.6, label='SHAP值')
@@ -1102,17 +1102,17 @@ for target_column in available_sensory_columns:
     plt.plot([0, 1], [0, 1], 'k--', label='随机 (AUC = 0.50)')
 
     model_colors = {
-        'Logistic Regression': '#1f77b4',
-        'SVM': '#ff7f0e', 
-        'KNN': '#2ca02c',
-        'Decision Tree': '#d62728',
-        'Random Forest Classifier': '#9467bd',
-        'Extra Trees Classifier': '#8c564b',
-        'Naive Bayes': '#e377c2',
-        'MLP': '#7f7f7f',
-        'Gradient Boosting Classifier': '#bcbd22',
-        'AdaBoost': '#17becf',
-        'XGBoost': '#ff9896'
+        'Logistic Regression': '
+        'SVM': '
+        'KNN': '
+        'Decision Tree': '
+        'Random Forest Classifier': '
+        'Extra Trees Classifier': '
+        'Naive Bayes': '
+        'MLP': '
+        'Gradient Boosting Classifier': '
+        'AdaBoost': '
+        'XGBoost': '
     }
     
     line_styles = ['-', '--', '-.', ':']
@@ -1121,7 +1121,7 @@ for target_column in available_sensory_columns:
         n_classes = y_true_all_current_target.shape[1]
         logger.info(f"多分类ROC曲线，类别数: {n_classes}")
         for name, y_proba in y_pred_proba_all.items():
-            color = model_colors.get(name, '#000000')  # 默认黑色
+            color = model_colors.get(name, '
             fpr = dict()
             tpr = dict()
             roc_auc = dict()
@@ -1132,12 +1132,12 @@ for target_column in available_sensory_columns:
                 plt.plot(fpr[i], tpr[i], color=color, linestyle=linestyle, linewidth=2,
                         label=f'{name} (类别{i}, AUC = {roc_auc[i]:.2f})')
                 logger.info(f"  {name} 类别{i}: AUC = {roc_auc[i]:.4f}")
-    else:  # 二分类情况
+    else:
         logger.info("二分类ROC曲线")
         for idx, (name, y_proba) in enumerate(y_pred_proba_all.items()):
-            color = model_colors.get(name, '#000000')  # 默认黑色
+            color = model_colors.get(name, '
             if y_proba.ndim > 1 and y_proba.shape[1] > 1:
-                y_proba_binary = y_proba[:, 1]  # 使用正类的概率
+                y_proba_binary = y_proba[:, 1]
             else:
                 y_proba_binary = y_proba.flatten() if y_proba.ndim > 1 else y_proba
             
@@ -1514,7 +1514,7 @@ def plot_task_suitability_analysis(all_regression_results, all_classification_re
                 if cls_name and cls_name in cls_results:
                     algorithm_performance[alg_base]['classification_scores'].append(cls_results[cls_name]['AUC'])
                 else:
-                    algorithm_performance[alg_base]['classification_scores'].append(0.5)  # 默认值
+                    algorithm_performance[alg_base]['classification_scores'].append(0.5)
     
     suitability_data = []
     for alg, data in algorithm_performance.items():
@@ -1530,10 +1530,10 @@ def plot_task_suitability_analysis(all_regression_results, all_classification_re
                 'regression_std': reg_std,
                 'classification_mean': cls_mean,
                 'classification_std': cls_std,
-                'regression_stability': 1 / (1 + reg_std),  # 稳定性指标
+                'regression_stability': 1 / (1 + reg_std),
                 'classification_stability': 1 / (1 + cls_std),
                 'overall_performance': (reg_mean + cls_mean) / 2,
-                'task_versatility': 1 - abs(reg_mean - cls_mean)  # 任务适应性
+                'task_versatility': 1 - abs(reg_mean - cls_mean)
             })
     
     if suitability_data:
@@ -1741,7 +1741,7 @@ def generate_classification_regression_summary_report(all_regression_results, al
     for alg, count in reg_counter.most_common():
         summary_text += f"- {alg}: {count}次最佳 ({count/len(targets)*100:.1f}%)\n"
     
-    summary_text += "\n### 分类算法表现:\n"
+    summary_text += "\n
     for alg, count in cls_counter.most_common():
         summary_text += f"- {alg}: {count}次最佳 ({count/len(targets)*100:.1f}%)\n"
     
@@ -1752,7 +1752,7 @@ def generate_classification_regression_summary_report(all_regression_results, al
 """
     
     for target, data in report_data['best_algorithms'].items():
-        summary_text += f"### {target}:\n"
+        summary_text += f"
         summary_text += f"- 最佳回归: {data['regression']['name']} (R^2 = {data['regression']['r2']:.4f})\n"
         summary_text += f"- 最佳分类: {data['classification']['name']} (AUC = {data['classification']['auc']:.4f})\n\n"
     
@@ -1793,7 +1793,7 @@ else:
     logger.info("生成回归模型R^2对比柱状图...")
     plt.figure(figsize=(16, 10))
     x = np.arange(len(targets))
-    width = 0.06  # 减小宽度以适应更多模型
+    width = 0.06
     multiplier = 0
     for model_name in valid_models:
         r2_values = [all_regression_results[target][model_name]['R2'] for target in targets]

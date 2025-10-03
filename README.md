@@ -10,11 +10,11 @@ This repository contains two scripts that support data-driven analysis of sauce-
 
 ## Prerequisites
 - Python 3.8+
-- Required libraries: pandas, numpy, scikit-learn, imbalanced-learn, xgboost, shap, seaborn, matplotlib, statsmodels, openpyxl
+- Required libraries: scikit-learn, xgboost, shap, seaborn, matplotlib, statsmodels, openpyxl
 
 ## Quick Start
 1. Install dependencies inside a virtual environment.
-2. Run `python ml_build_plots.py` with your training spreadsheet (default: `Flavor_OAV_Sensory_Training_v3.xlsx`).
+2. Run `python ml_build_plots.py` with your training spreadsheet.
 3. Load the saved models via `FlavorPredictor` from `model_predictor.py` for downstream prediction scripts.
 
 ## License
